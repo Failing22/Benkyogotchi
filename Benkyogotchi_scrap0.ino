@@ -337,12 +337,12 @@ int coins = 0;
 float level=0;
 
 //settings
-bool soundEnabled=false;
+bool soundEnabled=true;
 
 int action=0;
 int setting=0;
 
-bool dead = false;
+bool dead = true;
 bool studying = false;
 bool notification = false;
 int notificationBlink=0;
@@ -846,17 +846,19 @@ void loop() {
 
 else{
     //Dead.
-    display.drawBitmap(50,50,death,24,24,WHITE);
-    display.display();
-    display.clearDisplay();
     display.setTextColor(WHITE);
-    display.println(F("Benkyogotchi has died!\nYou should have known better.\n"));
+    display.println(F("\n     Benkyogotchi     \n       has died!            "));
     display.display();
-    delay(3600);
+    display.drawBitmap(50,35,death,24,24,WHITE);
+    display.display();
+    delay(5000);
+    while(button1State != ACTIVATED){
     display.clearDisplay();
     display.setCursor(0,0);
-    display.println(F("Restart the journey?\n Press 1 to resurrect your pet."));
+    display.println(F("\n Restart the journey? \n       Press 1       \n    to resurrect           your pet. "));
     display.display();
+    // display.drawBitmap(50,40,death_wreath,24,24,WHITE);
+    //display.display();
 
     /*User wishes to restart*/
     if(button1State==ACTIVATED){
@@ -868,6 +870,7 @@ else{
       asm volatile ("  jmp 0");
     }
   }
+}
 
 }
 
