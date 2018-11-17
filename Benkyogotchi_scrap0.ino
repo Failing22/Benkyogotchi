@@ -402,54 +402,7 @@ void loop() {
 
 
     if(!dead){
-      /* -------- MODIFY PET STATS -------- */
-      if(studying){
-        hunger-=0.00005;
-        if(happiness+0.02<100){
-          happiness+=0.02;
-        }
-      }
-      else{
-        hunger-=0.00025;
-        if(happiness-0.001>0){
-          happiness-=0.001;
-        }
-
-      }
-
-      if(hunger<=0 || health<=0 || happiness<=0){
-        dead=true;
-        if(soundEnabled){
-          tone(sound,500,500);
-          delay(550);
-          tone(sound,400,500);
-          delay(550);
-          tone(sound,300,600);
-        }
-      }
-
-
-
-      if (!menuOpened){
-        if(happiness >30){
-            for(int i=0; i<2; i++){
-                display.drawBitmap(40, 10, cat[i] , 46, 46, WHITE);
-                display.display();
-                display.clearDisplay();
-                delay(600);
-            }
-          }
-
-        if(happiness <=30){
-             for(int i=0;i<2;i++){
-                display.drawBitmap(40, 10, catsad[i] , 46, 46, WHITE);
-                display.display();
-                display.clearDisplay();
-                delay(600);
-                }
-              }
-            }
-
+      display.setCursor(0,0);
 
      /* ------- BUTTON PRESS ACTIONS ------- */
 
@@ -559,6 +512,53 @@ void loop() {
   }
 
 
+  /* -------- MODIFY PET STATS -------- */
+  if(studying){
+    hunger-=0.00005;
+    if(happiness+0.02<100){
+      happiness+=0.02;
+    }
+  }
+  else{
+    hunger-=0.00025;
+    if(happiness-0.001>0){
+      happiness-=0.001;
+    }
+
+  }
+
+  if(hunger<=0 || health<=0 || happiness<=0){
+    dead=true;
+    if(soundEnabled){
+      tone(sound,500,500);
+      delay(550);
+      tone(sound,400,500);
+      delay(550);
+      tone(sound,300,600);
+    }
+  }
+
+
+
+  if (!menuOpened){
+    if(happiness >30){
+        for(int i=0; i<2; i++){
+            display.drawBitmap(40, 10, cat[i] , 46, 46, WHITE);
+            display.display();
+            display.clearDisplay();
+            delay(600);
+        }
+      }
+
+    if(happiness <=30){
+         for(int i=0;i<2;i++){
+            display.drawBitmap(40, 10, catsad[i] , 46, 46, WHITE);
+            display.display();
+            display.clearDisplay();
+            delay(600);
+            }
+          }
+        }
 
     /* ------- MENUS AND ACTIONS ------- */
     //render menu
