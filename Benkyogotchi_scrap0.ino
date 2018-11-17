@@ -317,13 +317,13 @@ bool justOpened=false;
 
 
 const char mainMenu[MENUSIZE][9][STRING_SIZE] PROGMEM = {
-  {"food","pear","onigiri","pizza",NULL},
-  {"study"},
-  {"play",NULL},
-  {"visit the doctor",NULL},
-  {"stats","hunger","happiness","health",NULL},
-  {"avatar","coins","level"},
-  {"settings","sound",NULL},
+  {"food","pear","onigiri","pizza", NULL},
+  {"study", NULL},
+  {"play", NULL},
+  {"visit the doctor", NULL},
+  {"stats","hunger","happiness","health", NULL},
+  {"avatar","coins","level", NULL},
+  {"settings","sound", NULL},
 };
 
 
@@ -342,14 +342,14 @@ bool soundEnabled=true;
 int action=0;
 int setting=0;
 
-bool dead = true;
+bool dead = false;
 bool studying = false;
 bool notification = false;
 int notificationBlink=0;
 
 #define ACTIVATED LOW
 
-void setup() {
+void setup(){
   pinMode(button1Pin, INPUT);
   pinMode(button2Pin, INPUT);
   pinMode(button3Pin, INPUT);
@@ -402,6 +402,55 @@ void loop() {
 
 
     if(!dead){
+
+        /* -------- MODIFY PET STATS -------- */
+  if(studying){
+    hunger-=0.00005;
+    if(happiness+0.02<100){
+      happiness+=0.02;
+    }
+  }
+  else{
+    hunger-=0.00025;
+    if(happiness-0.001>0){
+      happiness-=0.001;
+    }
+
+  }
+
+  if(hunger<=0 || health<=0 || happiness<=0){
+    dead=true;
+    if(soundEnabled){
+      tone(sound,500,500);
+      delay(550);
+      tone(sound,400,500);
+      delay(550);
+      tone(sound,300,600);
+    }
+  }
+
+
+
+  if (!menuOpened){
+    if(happiness >30){
+        for(int i=0; i<2; i++){
+            display.drawBitmap(40, 10, cat[i] , 46, 46, WHITE);
+            display.display();
+            display.clearDisplay();
+            delay(600);
+        }
+      }
+
+    if(happiness <=30){
+         for(int i=0;i<2;i++){
+            display.drawBitmap(40, 10, catsad[i] , 46, 46, WHITE);
+            display.display();
+            display.clearDisplay();
+            delay(600);
+            }
+          }
+        }
+      display.clearDisplay();
       display.setCursor(0,0);
 
      /* ------- BUTTON PRESS ACTIONS ------- */
@@ -512,53 +561,7 @@ void loop() {
   }
 
 
-  /* -------- MODIFY PET STATS -------- */
-  if(studying){
-    hunger-=0.00005;
-    if(happiness+0.02<100){
-      happiness+=0.02;
-    }
-  }
-  else{
-    hunger-=0.00025;
-    if(happiness-0.001>0){
-      happiness-=0.001;
-    }
 
-  }
-
-  if(hunger<=0 || health<=0 || happiness<=0){
-    dead=true;
-    if(soundEnabled){
-      tone(sound,500,500);
-      delay(550);
-      tone(sound,400,500);
-      delay(550);
-      tone(sound,300,600);
-    }
-  }
-
-
-
-  if (!menuOpened){
-    if(happiness >30){
-        for(int i=0; i<2; i++){
-            display.drawBitmap(40, 10, cat[i] , 46, 46, WHITE);
-            display.display();
-            display.clearDisplay();
-            delay(600);
-        }
-      }
-
-    if(happiness <=30){
-         for(int i=0;i<2;i++){
-            display.drawBitmap(40, 10, catsad[i] , 46, 46, WHITE);
-            display.display();
-            display.clearDisplay();
-            delay(600);
-            }
-          }
-        }
 
     /* ------- MENUS AND ACTIONS ------- */
     //render menu
@@ -719,27 +722,27 @@ void loop() {
 
 
       switch(action){
-        case 201:
+        //case 201:
           //Studying
-            unsigned long startTime = millis ();
-            unsigned long interval = 25*60000; /*time in miliseconds*/
+          //  unsigned long startTime = millis ();
+          //  unsigned long interval = 25*60000; /*time in miliseconds*/
 
-            while (millis() - startTime >= interval)
-                {
-                display.clearDisplay();
-                display.setCursor(10,00);
-                printDigits(0);
-                display.display(); // display screen showing 00:00s
-                }
-                break;
+          //  while (millis() - startTime >= interval)
+          //      {
+          //      display.clearDisplay();
+          //      display.setCursor(10,00);
+          //      printDigits(0);
+          //      display.display(); // display screen showing 00:00s
+          //      }
+          //      break;
 
 
 
-          coins += 25;
-          level += 0.15;
-          happiness += 10;
+          //coins += 25;
+          //level += 0.15;
+          //happiness += 10;
 
-          break;
+          //break;
 
         case 501:
           //Restore health
@@ -875,6 +878,11 @@ else{
 }
 
 /*=========================================================*/
+
+void drawBar(float value){
+  display.fillRect(72,19,48*value/100,3,WHITE);
+}
+
 char* getItem(int menu, int index){
   char oneItem [STRING_SIZE];
   memcpy_P (&oneItem, &mainMenu[menu][index], sizeof oneItem);
@@ -882,32 +890,30 @@ char* getItem(int menu, int index){
 }
 
 
-void drawBar(float value){
-  display.fillRect(72,19,48*value/100,3,WHITE);
-}
+
 
 
 /*timer function*/
-const long minute = 60000;
-void printDigits(long timeInMillis){
+//const long minute = 60000;
+//void printDigits(long timeInMillis){
                // convert the time from milliseconds to four digit SS:HH
                // seconds and hundredths and display at current cursor position
-               int seconds;
-               int hundredths;
-               seconds = timeInMillis /1000;
-               seconds = seconds % 60; // seconds never more than 60
-               hundredths = (timeInMillis % 1000)/10;
-
-               if (seconds <10){ // print leading zero if necessary
-                 display.print("0");
-               }
-               display.print(seconds);
-               display.print(":");
-               if (hundredths <10){ //print leading zero if necessary
-               display.print("0");
-
-               }
-               display.print(hundredths);
-               display.print("s");
-               display.display();
-             }
+//               int seconds;
+//               int hundredths;
+//               seconds = timeInMillis /1000;
+//               seconds = seconds % 60; // seconds never more than 60
+//               hundredths = (timeInMillis % 1000)/10;
+//
+//               if (seconds <10){ // print leading zero if necessary
+//                 display.print("0");
+//               }
+//               display.print(seconds);
+//               display.print(":");
+//               if (hundredths <10){ //print leading zero if necessary
+//               display.print("0");
+//
+//               }
+//               display.print(hundredths);
+//               display.print("s");
+//               display.display();
+//             }
