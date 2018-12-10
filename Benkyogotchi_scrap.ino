@@ -379,8 +379,8 @@ const unsigned char* onigiri[3] = {
        0x00, 0x00, 0x00, 0x00
      };
 
- const unsigned char* yarn[2] = {
-     yarn1,yarn2
+ const unsigned char* yarn[3] = {
+     yarn1,yarn2,yarn1
  };
 
 
@@ -401,9 +401,9 @@ bool justOpened=false;
 const char mainMenu[MENUSIZE][7][STRING_SIZE] PROGMEM = {
   //cases from 101 to 103
   {"food","pear","pizza","onigiri", NULL},
-  //case 202 for pomodoro
+  //case 201 for pomodoro
   {"gain coins","study",NULL},
-  //case 302 for yarn
+  //case 301 for yarn
   {"play","yarn", NULL},
   {"restore health","go to the doctor", NULL},
   {"stats","hunger","happiness","health", NULL},
@@ -645,7 +645,15 @@ void loop() {
     if(soundEnabled){
       tone(sound,1000,80);
     }
-    if(!menuDepth){
+    if(studying){
+        display.clearDisplay();
+        display.println(F("Progress lost!"));
+        studying = false;
+        menuOpened = true;
+        display.clearDisplay();
+    }
+    else{
+      if(!menuDepth){
         menuOpened=false;
         menu=0;
         setting=0;
@@ -659,6 +667,7 @@ void loop() {
 
 
     delay(60);
+  }
   }
 
 
@@ -703,7 +712,7 @@ void loop() {
 
     if(action>0){
 
-      if((action==101 || action==102 || action==103) && !studying){
+      if((action==101 || action==102 || action==103 || action==301 ) && !studying){
 
         //animate eating
 
@@ -771,6 +780,23 @@ void loop() {
                     }
                     break;
 
+                case 301:
+                //yarn
+                    if (coins >=25){
+
+                    display.clearDisplay();
+                    display.drawBitmap(50,20,yarn[k],24,24,WHITE);
+                    display.display();
+                    display.clearDisplay();
+                    delay(400);
+                  }
+                    else{
+                        display.setCursor(32,32);
+                        display.print(F("Not enough coins!"));
+                        display.display();
+                        delay(150);
+                    }
+                    break;
 
           }
         }
@@ -781,7 +807,7 @@ void loop() {
         switch(action){
           //Pear - restores 20 points of health
           case 101:
-            if(hunger+30>100){
+            if(hunger+30>=100){
                 hunger=100;
                 level += 0.05;
                 happiness += 5;
@@ -799,7 +825,7 @@ void loop() {
             break;
           //Pizza -restores 10 points of health
           case 102:
-            if(hunger+10>100){
+            if(hunger+10>=100){
               hunger=100;
               happiness += 5;
               level += 0.05;
@@ -812,7 +838,7 @@ void loop() {
             break;
           //Onigiri - restores 10 points of health
           case 103:
-            if(hunger+5<=100){
+            if(hunger+5>=100){
               hunger=100;
               happiness += 5;
             }else{
@@ -821,6 +847,17 @@ void loop() {
             }
             coins-=35;
             break;
+          //Yarn
+          case 301:
+            if(happiness+20<=100){
+              happiness=100;
+              health += 5;
+            }else{
+              happiness +=5;
+              health +=5;
+            }
+            coins-=25;
+            break;
         }
 
       }
@@ -828,7 +865,7 @@ void loop() {
 
 
     else{
-        if(action==101 || action==102 || action==103){
+        if(action==101 || action==102 || action==103 || action==301 ){
           if(soundEnabled){
             tone(sound,500,200);
             delay(250);
@@ -845,14 +882,14 @@ void loop() {
           unsigned long startTime = millis ();
           unsigned long interval = 10000; /*time in miliseconds*/
           while (studying){
-         while (millis() - startTime <= interval)
+            while (millis() - startTime <= interval)
              {
               display.setCursor(32,10);
               printDigits(millis() - startTime);
               display.display();
               display.clearDisplay(); // display screen showing 00:00s
 
-              if (button3State == ACTIVATED){
+              /*if (button3State == ACTIVATED){
                 if(soundEnabled){
                   tone(sound,600,80);
                 }
@@ -861,7 +898,7 @@ void loop() {
                 studying = false;
                 display.clearDisplay();
                 break;
-              }
+              }*/
               }
           display.clearDisplay();
           display.setCursor(32,10);
@@ -879,17 +916,18 @@ void loop() {
           }
           break;
 
-        case 301:
+        /*case 301:
 
         if (coins >=35){
-        for (int k = 0; k < 2; ++k){
-        display.clearDisplay();
-        display.drawBitmap(50,20,yarn[k],24,24,WHITE);
-        display.display();
-        display.clearDisplay();
-        delay(400);
-      }
-    }
+          display.fillRect(0,0,display.width(),display.height(),BLACK);
+          for (int k = 0; k < 2; ++k){
+          display.clearDisplay();
+          display.drawBitmap(50,20,yarn[k],24,24,WHITE);
+          display.display();
+          display.clearDisplay();
+          delay(400);
+          }
+        }
           else{
             display.setCursor(32,32);
             display.print(F("Not enough coins!"));
@@ -897,7 +935,7 @@ void loop() {
             delay(150);
         }
 
-        break;
+        break;*/
 
 
 
@@ -928,7 +966,7 @@ void loop() {
 
           break;
 
-          case 301:
+        /*case 301:
 
           if (coins >=45){
             if (health < 50){
@@ -938,6 +976,7 @@ void loop() {
               health += 20;
             }
           }
+          break;*/
 
         case 401:
           //Restore health
@@ -976,13 +1015,13 @@ void loop() {
       if(setting==503){
         drawBar(health);
       }
-      if(setting==505 || setting==506 || setting==701){
+      if(setting==601 || setting==602 || setting==701){
         display.setCursor(80,16);
       }
-      if(setting==505){
+      if(setting==601){
         display.println(coins,1);
       }
-      if(setting==506){
+      if(setting==602){
         display.println(level,1);
       }
       if(setting==701){
