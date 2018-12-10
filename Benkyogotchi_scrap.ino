@@ -405,7 +405,7 @@ const char mainMenu[MENUSIZE][7][STRING_SIZE] PROGMEM = {
   {"gain coins","study",NULL},
   //case 301 for yarn
   {"play","yarn", NULL},
-  {"restore health","go to the doctor", NULL},
+  {"restore hp","doctor", NULL},
   {"stats","hunger","happiness","health", NULL},
   {"avatar","coins","level", NULL},
   {"settings","sound", NULL},
@@ -416,13 +416,13 @@ const char mainMenu[MENUSIZE][7][STRING_SIZE] PROGMEM = {
 /* ------- PET STATS ------- */
 
 float hunger=100;
-float happiness=100;
+float happiness=25;
 float health=100;
 int coins = 100;
 float level=0;
 
 //settings
-bool soundEnabled=false;
+bool soundEnabled=true;
 
 int action=0;
 int setting=0;
@@ -542,14 +542,14 @@ void loop() {
            display.display();
            display.clearDisplay();
            delay(600);
-     }
-     }
+          }
+        }
      else{
      display.setTextColor(WHITE);
      display.setCursor(50,50);
      display.print(F("MENU"));
      display.display();
-   }
+     }
        }
       display.clearDisplay();
       display.setCursor(0,0);
@@ -712,7 +712,7 @@ void loop() {
 
     if(action>0){
 
-      if((action==101 || action==102 || action==103 || action==301 ) && !studying){
+      if(( action==101 || action==102 || action==103 || action==301 || action==401  ) && !studying){
 
         //animate eating
 
@@ -785,7 +785,7 @@ void loop() {
                     if (coins >=25){
 
                     display.clearDisplay();
-                    display.drawBitmap(50,20,yarn[k],24,24,WHITE);
+                    display.drawBitmap(40,10,yarn[k],46,46,WHITE);
                     display.display();
                     display.clearDisplay();
                     delay(400);
@@ -796,8 +796,25 @@ void loop() {
                         display.display();
                         delay(150);
                     }
-                    break;
+                    break;     
+                case 401:
+                    if(coins >=50){
+                  /*if(health<60){*/
+                        display.clearDisplay();
+                        display.setCursor(32,32);
+                        display.print(F("Benkyogotchi is feeling better now!"));
+                        display.display();
+                        delay(500);
+              //}
 
+                    }else{
+                        display.clearDisplay();
+                        display.setCursor(32,32);
+                        display.print(F("Not enough coins!"));
+                        display.display();
+                        delay(150);
+                    }
+                    break;
           }
         }
 
@@ -807,56 +824,64 @@ void loop() {
         switch(action){
           //Pear - restores 20 points of health
           case 101:
-            if(hunger+30>=100){
-                hunger=100;
-                level += 0.05;
-                happiness += 5;
-            }else{
-                hunger+=20;
-                level += 0.05;
-                happiness += 5;
-            }
-            if(health+1<=100){
-                health+=1;
-                level += 0.05;
-                happiness += 5;
+            if (coins >= 50){
+                if(hunger+30>=100){
+                    hunger=100;
+                    level += 0.05;
+                    happiness += 5;
+                }else{
+                    hunger+=20;
+                    level += 0.05;
+                    happiness += 5;
+                }
+                if(health+1<=100){
+                    health+=1;
+                    level += 0.05;
+                    happiness += 5;
             }
             coins-=50;
+            }
             break;
           //Pizza -restores 10 points of health
           case 102:
-            if(hunger+10>=100){
-              hunger=100;
-              happiness += 5;
-              level += 0.05;
-            }else{
-              hunger+=10;
-              happiness += 5;
-              level += 0.05;
+            if (coins >=35){
+                if(hunger+10>=100){
+                    hunger=100;
+                    happiness += 5;
+                    level += 0.05;
+                }else{
+                    hunger+=10;
+                    happiness += 5;
+                    level += 0.05;
+                }
+                coins -=35;
             }
-            coins -=35;
             break;
           //Onigiri - restores 10 points of health
           case 103:
-            if(hunger+5>=100){
-              hunger=100;
-              happiness += 5;
-            }else{
-              hunger +=5;
-              happiness +=5;
+            if (coins >= 35){
+                if(hunger+5>=100){
+                    hunger=100;
+                    happiness += 5;
+                }else{
+                    hunger +=5;
+                    happiness +=5;
+                }
+                coins-=35;
             }
-            coins-=35;
             break;
           //Yarn
           case 301:
-            if(happiness+20<=100){
-              happiness=100;
-              health += 5;
-            }else{
-              happiness +=5;
-              health +=5;
+            if(coins >=25){
+                if(happiness+20>=100){
+                    happiness=100;
+                    health += 5;
+                }else{
+                    happiness +=20;
+                    health +=5;
+                }
+                coins-=25;
             }
-            coins-=25;
             break;
         }
 
@@ -916,44 +941,7 @@ void loop() {
           }
           break;
 
-        /*case 301:
 
-        if (coins >=35){
-          display.fillRect(0,0,display.width(),display.height(),BLACK);
-          for (int k = 0; k < 2; ++k){
-          display.clearDisplay();
-          display.drawBitmap(50,20,yarn[k],24,24,WHITE);
-          display.display();
-          display.clearDisplay();
-          delay(400);
-          }
-        }
-          else{
-            display.setCursor(32,32);
-            display.print(F("Not enough coins!"));
-            display.display();
-            delay(150);
-        }
-
-        break;*/
-
-
-
-        case 401:
-        if(coins >=50){
-            if(health<60){
-              display.setCursor(32,32);
-              display.print(F("Benkyogotchi is feeling better now!"));
-              display.display();
-              delay(500);
-              }
-
-        }else{
-            display.setCursor(32,32);
-            display.print(F("Not enough coins!"));
-            display.display();
-            delay(600);
-        }
       }
 
       switch(action){
@@ -981,14 +969,18 @@ void loop() {
         case 401:
           //Restore health
             if(coins >=50){
-                if(health<60){
-                  health=100;
+                if(health>=70){
+                  health = 100;
                   level += 0.5;
-                  happiness += 30;
+                  //happiness -= 10;
                   }
-
+                else{
+                  health += 30;
+                  level += 0.5;
+                  //happiness -= 10;
+                }
+                coins -=50;
             }
-
             break;
 
           case 701:
