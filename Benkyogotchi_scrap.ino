@@ -416,19 +416,20 @@ const char mainMenu[MENUSIZE][7][STRING_SIZE] PROGMEM = {
 /* ------- PET STATS ------- */
 
 float hunger=100;
-float happiness=25;
+float happiness=20;
 float health=100;
 int coins = 100;
 float level=0;
 
 //settings
-bool soundEnabled=true;
+bool soundEnabled=false;
 
 int action=0;
 int setting=0;
 
 bool dead = false;
 bool studying = false;
+bool podEsc = false;
 bool notification = false;
 int notificationBlink=0;
 
@@ -517,7 +518,7 @@ void loop() {
 
 
 
-  if(happiness >=70){
+  if( happiness >=30 && health >= 30 && hunger >= 30 ){
      if(!menuOpened & !studying){
        for(int i=0; i<2; i++){
            display.drawBitmap(40, 10, cat[i] , 46, 46, WHITE);
@@ -535,7 +536,7 @@ void loop() {
      }
    }
      }
-   if(happiness <=30){
+   if( happiness <= 30|| health <= 30 || hunger <= 30 ){
      if(!menuOpened){
         for(int i=0;i<2;i++){
            display.drawBitmap(40, 10, catsad[i] , 46, 46, WHITE);
@@ -646,11 +647,12 @@ void loop() {
       tone(sound,1000,80);
     }
     if(studying){
-        display.clearDisplay();
-        display.println(F("Progress lost!"));
-        studying = false;
-        menuOpened = true;
-        display.clearDisplay();
+        //display.clearDisplay();
+        //display.println(F("Progress lost!"));
+        tone(sound,1000,80);
+        podEsc = true;
+        //menuOpened = true;
+        //display.clearDisplay();
     }
     else{
       if(!menuDepth){
@@ -828,11 +830,15 @@ void loop() {
                 if(hunger+30>=100){
                     hunger=100;
                     level += 0.05;
-                    happiness += 5;
                 }else{
                     hunger+=20;
                     level += 0.05;
-                    happiness += 5;
+                }
+                if(happiness+5 >= 100){
+                  happiness = 100;
+                }
+                else{
+                  happiness +=5;
                 }
                 if(health+1<=100){
                     health+=1;
@@ -847,12 +853,16 @@ void loop() {
             if (coins >=35){
                 if(hunger+10>=100){
                     hunger=100;
-                    happiness += 5;
                     level += 0.05;
                 }else{
                     hunger+=10;
-                    happiness += 5;
                     level += 0.05;
+                }
+                if(happiness+5 >= 100){
+                  happiness = 100;
+                }
+                else{
+                  happiness +=5;
                 }
                 coins -=35;
             }
@@ -862,10 +872,14 @@ void loop() {
             if (coins >= 35){
                 if(hunger+5>=100){
                     hunger=100;
-                    happiness += 5;
                 }else{
                     hunger +=5;
-                    happiness +=5;
+                }
+                if(happiness+5 >= 100){
+                  happiness = 100;
+                }
+                else{
+                  happiness +=5;
                 }
                 coins-=35;
             }
@@ -875,10 +889,14 @@ void loop() {
             if(coins >=25){
                 if(happiness+20>=100){
                     happiness=100;
-                    health += 5;
                 }else{
                     happiness +=20;
-                    health +=5;
+                }
+                if(health+5 >= 100){
+                  health = 100;
+                }
+                else{
+                  health +=5;
                 }
                 coins-=25;
             }
@@ -909,21 +927,26 @@ void loop() {
           while (studying){
             while (millis() - startTime <= interval)
              {
+              if (podEsc){
+              /*if(soundEnabled){
+                  tone(sound,600,80);
+                }*/
+                display.clearDisplay();
+                display.println(F("Progress lost!"));
+                display.display();
+                delay(150);
+                studying = false;
+                menuOpened = true;
+                display.clearDisplay();
+                break;
+                //break;
+              }
               display.setCursor(32,10);
               printDigits(millis() - startTime);
               display.display();
               display.clearDisplay(); // display screen showing 00:00s
 
-              /*if (button3State == ACTIVATED){
-                if(soundEnabled){
-                  tone(sound,600,80);
-                }
-                display.clearDisplay();
-                display.println(F("Progress lost!"));
-                studying = false;
-                display.clearDisplay();
-                break;
-              }*/
+              
               }
           display.clearDisplay();
           display.setCursor(32,10);
@@ -950,7 +973,13 @@ void loop() {
 
           coins += 25;
           level += 0.15;
-          happiness += 10;
+          if(happiness+10 >=100){
+            happiness = 100;
+          }
+          else{
+            happiness += 10;
+          }
+          
 
           break;
 
@@ -969,16 +998,15 @@ void loop() {
         case 401:
           //Restore health
             if(coins >=50){
-                if(health>=70){
+                if(health+30 >=100){
                   health = 100;
                   level += 0.5;
-                  //happiness -= 10;
                   }
                 else{
                   health += 30;
                   level += 0.5;
-                  //happiness -= 10;
                 }
+                happiness -= 10;
                 coins -=50;
             }
             break;
