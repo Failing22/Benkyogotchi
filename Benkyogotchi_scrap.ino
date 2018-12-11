@@ -646,30 +646,17 @@ void loop() {
     if(soundEnabled){
       tone(sound,1000,80);
     }
-    if(studying){
-        //display.clearDisplay();
-        //display.println(F("Progress lost!"));
-        //tone(sound,1000,80);
-        podEsc = 1;
-        //menuOpened = true;
-        //display.clearDisplay();
+    if(!menuDepth){
+       menuOpened=false;
+       menu=0;
+       setting=0;
+    }else{
+       menuDepth=false;
+       setting=100*(menu+1)+1;
     }
-    else{
-      if(!menuDepth){
-        menuOpened=false;
-        menu=0;
-        setting=0;
-      }else{
-        menuDepth=false;
-        setting=100*(menu+1)+1;
-      }
-      action=NULL;
-      subMenu=1;
-
-
-
+    action=NULL;
+    subMenu=1;
     delay(60);
-  }
   }
 
 
