@@ -416,13 +416,13 @@ const char mainMenu[MENUSIZE][7][STRING_SIZE] PROGMEM = {
 /* ------- PET STATS ------- */
 
 float hunger=100;
-float happiness=20;
+float happiness=100;
 float health=100;
 int coins = 100;
 float level=0;
 
 //settings
-bool soundEnabled=false;
+bool soundEnabled=true;
 
 int action=0;
 int setting=0;
@@ -649,8 +649,8 @@ void loop() {
     if(studying){
         //display.clearDisplay();
         //display.println(F("Progress lost!"));
-        tone(sound,1000,80);
-        podEsc = true;
+        //tone(sound,1000,80);
+        podEsc = 1;
         //menuOpened = true;
         //display.clearDisplay();
     }
@@ -927,40 +927,61 @@ void loop() {
           while (studying){
             while (millis() - startTime <= interval)
              {
-              if (podEsc){
-              /*if(soundEnabled){
+              int pulsador = digitalRead(button3Pin);
+              if (pulsador != 1){
+              if(soundEnabled){
                   tone(sound,600,80);
-                }*/
-                display.clearDisplay();
-                display.println(F("Progress lost!"));
-                display.display();
-                delay(150);
+                }
                 studying = false;
                 menuOpened = true;
-                display.clearDisplay();
+                podEsc = true;
+                
                 break;
-                //break;
               }
               display.setCursor(32,10);
               printDigits(millis() - startTime);
               display.display();
               display.clearDisplay(); // display screen showing 00:00s
 
-              
               }
-          display.clearDisplay();
-          display.setCursor(32,10);
-          printDigits(interval);
-          delay(250);
-          display.clearDisplay();
-          display.setCursor(20,32);
-          display.print(F("You won 25 coins!"));
-          display.display();
-          delay(400);
-          menuOpened = true;
-          studying = false;
-          //delay(250);
-          display.clearDisplay();
+          if (!podEsc){
+              display.clearDisplay();
+              display.setCursor(32,10);
+              printDigits(interval);
+              delay(250);
+              display.clearDisplay();
+              display.setCursor(20,32);
+              display.print(F("You won 25 coins!"));
+              display.display();
+              delay(400);
+              menuOpened = true;
+              studying = false;
+              if (soundEnabled){
+                  tone(sound,820,200);
+                  delay(200);
+             /*   tone(sound,82,300);
+                  delay(100);
+                  tone(sound,590,300);
+                  delay(200);
+                  tone(sound,970,300);
+                  delay(200);*/
+                  }
+              //delay(250);
+              display.clearDisplay();
+              }
+          else{
+              display.clearDisplay();
+              display.setCursor(20,32);
+              display.println(F("Progress lost!"));
+              display.display();
+              delay(200);                
+              display.clearDisplay();
+              delay(400);
+              coins -=25;
+              menuOpened = true;
+              studying = false;
+              podEsc = false;  
+              }
           }
           break;
 
@@ -982,18 +1003,6 @@ void loop() {
           
 
           break;
-
-        /*case 301:
-
-          if (coins >=45){
-            if (health < 50){
-              health += 30;
-            }
-            else{
-              health += 20;
-            }
-          }
-          break;*/
 
         case 401:
           //Restore health
