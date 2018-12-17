@@ -14,7 +14,6 @@ Adafruit_SSD1306 display(OLED_RESET);
 const int button1Pin = 9;
 const int button2Pin = 8;
 const int button3Pin = 7;
-int sensorValue = digitalRead(button1Pin);
 const int sound = 6;
 
 int button1State = 0;
@@ -35,8 +34,9 @@ void printDigits(long timeInMillis){
                seconds = timeInMillis /1000;
                seconds = seconds % 60; // seconds never more than 60
                hundredths = (timeInMillis % 1000)/10;
-            
+               display.setCursor(34,20);
                if (minutes <10){
+
                 display.print("0");
                }
                display.print(minutes);
@@ -302,7 +302,6 @@ const unsigned char* pizza[3] = {
     };
 
 /*=======================================================/*
-
 /*=======================Onigiri=========================*/
 // 'onigiri1', 24x24px
 const unsigned char onigiri1 [] PROGMEM = {
@@ -382,6 +381,37 @@ const unsigned char* onigiri[3] = {
  const unsigned char* yarn[3] = {
      yarn1,yarn2,yarn1
  };
+
+ // 'heart', 14x14px
+ const unsigned char heart [] PROGMEM = {
+ 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x80, 0x1d, 0xc0, 0x1f, 0xc0,
+ 	0x0f, 0x80, 0x07, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+ };
+
+
+  // 'coin1', 14x14px
+ const unsigned char coin1 [] PROGMEM = {
+ 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07, 0x80, 0x08, 0x40, 0x13, 0x20, 0x16, 0x20, 0x14, 0x20,
+ 	0x12, 0x20, 0x08, 0x40, 0x07, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+ };
+
+ // 'coin2', 14x14px
+ const unsigned char coin2 [] PROGMEM = {
+ 	0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x04, 0x80, 0x08, 0x40, 0x0a, 0x40, 0x0a, 0x40, 0x08, 0x40,
+ 	0x04, 0x80, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+ };
+ // 'coin3', 14x14px
+ const unsigned char coin3 [] PROGMEM = {
+ 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x04, 0x80, 0x04, 0x80, 0x04, 0x80, 0x04, 0x80,
+ 	0x04, 0x80, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+ };
+
+ const unsigned char* coin[5] = {
+     coin1,coin2,coin3,coin2,coin1
+ };
+
+
+
 
 
 
@@ -721,11 +751,15 @@ void loop() {
 
                     }
                     else{
-                        display.setCursor(30,30);
-                        display.print(F("Not enough coins!"));
+
+                        for (int i = 0; i < 5; ++i){
+                        display.setCursor(12,12);
+                        display.print(F("    Not enough \n        coins!"));
+                        display.drawBitmap(55, 30, coin[i] , 14, 14, WHITE);
                         display.display();
                         display.clearDisplay();
                         delay(200);
+                      }
                     }
                     break;
                 case 102:
@@ -740,12 +774,15 @@ void loop() {
 
                   }
                     else{
-                        display.setCursor(32,32);
-                        display.print(F("Not enough coins!"));
-                        display.display();
-                        display.clearDisplay();
-                        delay(300);
+                          for (int i = 0; i < 5; ++i){
+                          display.setCursor(12,12);
+                          display.print(F("    Not enough \n        coins!"));
+                          display.drawBitmap(55, 30, coin[i] , 14, 14, WHITE);
+                          display.display();
+                          display.clearDisplay();
+                          delay(200);
                     }
+                  }
 
                     break;
 
@@ -762,10 +799,14 @@ void loop() {
 
                   }
                     else{
-                        display.setCursor(32,32);
-                        display.print(F("Not enough coins!"));
+                        for (int i = 0; i < 5; ++i){
+                        display.setCursor(12,12);
+                        display.print(F("    Not enough \n        coins!"));
+                        display.drawBitmap(55, 30, coin[i] , 14, 14, WHITE);
                         display.display();
-                        delay(150);
+                        display.clearDisplay();
+                        delay(200);
+                      }
                     }
                     break;
 
@@ -780,28 +821,37 @@ void loop() {
                     delay(400);
                   }
                     else{
-                        display.setCursor(32,32);
-                        display.print(F("Not enough coins!"));
-                        display.display();
-                        delay(150);
+                      for (int i = 0; i < 5; ++i){
+                      display.setCursor(12,12);
+                      display.print(F("    Not enough \n        coins!"));
+                      display.drawBitmap(55, 30, coin[i] , 14, 14, WHITE);
+                      display.display();
+                      display.clearDisplay();
+                      delay(200);
                     }
-                    break;     
+                    }
+                    break;
                 case 401:
                     if(coins >=50){
                   /*if(health<60){*/
                         display.clearDisplay();
-                        display.setCursor(32,32);
-                        display.print(F("Benkyogotchi is feeling better now!"));
+                        display.setCursor(12,12);
+                        display.print(F("   Benkyogotchi\n      is feeling\n        better \n         now!"));
+                        display.drawBitmap(55,45,heart,14,14,WHITE);
                         display.display();
                         delay(500);
               //}
 
                     }else{
                         display.clearDisplay();
-                        display.setCursor(32,32);
-                        display.print(F("Not enough coins!"));
+                        for (int i = 0; i < 5; ++i){
+                        display.setCursor(12,12);
+                        display.print(F("    Not enough \n        coins!"));
+                        display.drawBitmap(55, 30, coin[i] , 14, 14, WHITE);
                         display.display();
-                        delay(150);
+                        display.clearDisplay();
+                        delay(200);
+                      }
                     }
                     break;
           }
@@ -910,19 +960,19 @@ void loop() {
           studying = true;
           menuOpened = false;
           unsigned long startTime = millis ();
-          unsigned long interval = 10000; /*time in miliseconds*/
+          unsigned long interval = 5000; /*time in miliseconds*/
           while (studying){
             while (millis() - startTime <= interval)
              {
-              int pulsador = digitalRead(button3Pin);
-              if (pulsador != 1){
+              int pulsator = digitalRead(button3Pin);
+              if (pulsator != 1){
               if(soundEnabled){
-                  tone(sound,600,80);
+                  tone(sound,300,300);
                 }
                 studying = false;
                 menuOpened = true;
                 podEsc = true;
-                
+
                 break;
               }
               display.setCursor(32,10);
@@ -936,11 +986,14 @@ void loop() {
               display.setCursor(32,10);
               printDigits(interval);
               delay(250);
+              for (int i = 0; i < 5; ++i) {
               display.clearDisplay();
-              display.setCursor(20,32);
-              display.print(F("You won 25 coins!"));
+              display.setCursor(12,12);
+              display.print(F("      You won \n       25 coins!"));
+              display.drawBitmap(55, 30, coin[i] , 14, 14, WHITE);
               display.display();
-              delay(400);
+              }
+              delay(600);
               menuOpened = true;
               studying = false;
               if (soundEnabled){
@@ -958,16 +1011,17 @@ void loop() {
               }
           else{
               display.clearDisplay();
-              display.setCursor(20,32);
-              display.println(F("Progress lost!"));
+              display.setCursor(12,12);
+              display.println(F("     Progress \n       was lost."));
               display.display();
-              delay(200);                
+              delay(200);
               display.clearDisplay();
               delay(400);
               coins -=25;
+              happiness -=25;
               menuOpened = true;
               studying = false;
-              podEsc = false;  
+              podEsc = false;
               }
           }
           break;
@@ -987,7 +1041,7 @@ void loop() {
           else{
             happiness += 10;
           }
-          
+
 
           break;
 
@@ -1080,30 +1134,35 @@ void loop() {
 
 else{
   //Dead.
-  display.setTextColor(WHITE);
-  display.println(F("\n     Benkyogotchi     \n      has died!            "));
-  display.drawBitmap(50,35,death,24,24,WHITE);
-  display.display();
-  delay(5000);
+  while(dead){
+    int sensorValue = digitalRead(button1Pin);
+    if(sensorValue != 1){
+    /*User wishes to restart*/
+        noTone(sound);
+        asm volatile ("  jmp 0");
+        dead = false;
+        }
+    display.clearDisplay();
+    display.setCursor(0,0);
+    display.setTextColor(WHITE);
+    display.println(F("\n     Benkyogotchi     \n      has died!            "));
+    display.drawBitmap(50,35,death,24,24,WHITE);
+    display.display();
+    delay(1000);
+    display.clearDisplay();
+    display.setCursor(0,0);
+    display.println(F("\n Restart the journey? \n       Press 1       \n    to resurrect           your pet. "));
+    display.display();
+    delay(1000);
+  
 
-  Serial.begin(9600);
-  pinMode(button1Pin,INPUT);
-  while (sensorValue != 0){
-  display.clearDisplay();
-  display.setCursor(0,0);
-  display.println(F("\n Restart the journey? \n       Press 1       \n    to resurrect           your pet. "));
-  display.display();
-  sensorValue = digitalRead(button1Pin);
-  }
 
   // display.drawBitmap(50,40,death_wreath,24,24,WHITE);
   //display.display();
 
-  /*User wishes to restart*/
 
-  if(sensorValue == 0){
-    noTone(sound);
-    asm volatile ("  jmp 0");
+
+  
   }
 }
 }
