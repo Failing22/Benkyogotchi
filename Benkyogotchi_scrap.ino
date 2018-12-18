@@ -788,7 +788,7 @@ void loop() {
 
                 case 103:
                 //onigiri
-                    if (coins >=35){
+                    if (coins >=20){
 
                     display.clearDisplay();
                     display.drawBitmap(50,20,onigiri[k],24,24,WHITE);
@@ -861,31 +861,33 @@ void loop() {
 
 
         switch(action){
-          //Pear - restores 20 points of health
+          //Pear - restores 20 points of hunger
           case 101:
             if (coins >= 50){
                 if(hunger+30>=100){
                     hunger=100;
                     level += 0.05;
-                }else{
-                    hunger+=20;
-                    level += 0.05;
-                }
-                if(happiness+5 >= 100){
-                  happiness = 100;
                 }
                 else{
+                  hunger+=30;
+                  level += 0.05;
+                  }
+                if(happiness+5 >= 100){
+                  happiness = 100;
+                  }
+                else{
                   happiness +=5;
-                }
-                if(health+1<=100){
-                    health+=1;
-                    level += 0.05;
-                    happiness += 5;
-            }
+                  }
+                if(health+10 >= 100){
+                    health = 100;
+                  }
+                else{
+                  health += 10;  
+                  }
             coins-=50;
             }
             break;
-          //Pizza -restores 10 points of health
+          //Pizza -restores 10 points of hunger
           case 102:
             if (coins >=35){
                 if(hunger+10>=100){
@@ -904,9 +906,9 @@ void loop() {
                 coins -=35;
             }
             break;
-          //Onigiri - restores 10 points of health
+          //Onigiri - restores 5 points of hunger
           case 103:
-            if (coins >= 35){
+            if (coins >= 20){
                 if(hunger+5>=100){
                     hunger=100;
                 }else{
@@ -918,10 +920,10 @@ void loop() {
                 else{
                   happiness +=5;
                 }
-                coins-=35;
+                coins-=20;
             }
             break;
-          //Yarn
+          //Yarn - restores 20 points of happiness
           case 301:
             if(coins >=25){
                 if(happiness+20>=100){
@@ -966,6 +968,7 @@ void loop() {
              {
               int pulsator = digitalRead(button3Pin);
               if (pulsator != 1){
+                /*Cancels study time*/
               if(soundEnabled){
                   tone(sound,300,300);
                 }
@@ -982,6 +985,7 @@ void loop() {
 
               }
           if (!podEsc){
+              /*Study time completed!!*/
               display.clearDisplay();
               display.setCursor(32,10);
               printDigits(interval);
@@ -999,17 +1003,11 @@ void loop() {
               if (soundEnabled){
                   tone(sound,820,200);
                   delay(200);
-             /*   tone(sound,82,300);
-                  delay(100);
-                  tone(sound,590,300);
-                  delay(200);
-                  tone(sound,970,300);
-                  delay(200);*/
                   }
-              //delay(250);
               display.clearDisplay();
               }
           else{
+            /*Study time cancelled :(*/
               display.clearDisplay();
               display.setCursor(12,12);
               display.println(F("     Progress \n       was lost."));
@@ -1060,8 +1058,9 @@ void loop() {
                 coins -=50;
             }
             break;
-
+        
           case 701:
+            //sound on/off
             soundEnabled= !soundEnabled;
           break;
       }
@@ -1153,18 +1152,9 @@ else{
     display.setCursor(0,0);
     display.println(F("\n Restart the journey? \n       Press 1       \n    to resurrect           your pet. "));
     display.display();
-    delay(1000);
-  
-
-
-  // display.drawBitmap(50,40,death_wreath,24,24,WHITE);
-  //display.display();
-
-
-
-  
-  }
-}
+    delay(1000); 
+      } 
+   }
 }
 
 
